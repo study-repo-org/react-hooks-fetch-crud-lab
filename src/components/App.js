@@ -3,58 +3,87 @@ import AdminNavBar from "./AdminNavBar";
 import QuestionForm from "./QuestionForm";
 import QuestionList from "./QuestionList";
 
-function App() {
+const App = () => {
   const [page, setPage] = useState("List");
-  const [questions, setQuestions] = useState([]);
+
+  const [questions, setQuestions] = useState([
+    {
+      id: 1,
+      prompt:
+        "What special prop should always be included for lists of elements?",
+      answers: ["id", "name", "key", "prop"],
+      correctIndex: 2,
+    },
+  ]);
 
   useEffect(() => {
-    fetchQuestions();
+    fetch("http://localhost:4000/questions")
+      .then((response) => response.json())
+      .then((res) => setQuestions(res));
   }, []);
 
-  const fetchQuestions = async () => {
-    try {
-      const response = await fetch("http://localhost:4000/questions"); // Assuming your endpoint is /api/questions
-      const data = await response.json();
-      setQuestions(data);
-    } catch (error) {
-      console.error("Error fetching questions:", error);
-    }
-  };
+  const addQuestion = (newQuestion) => {
+    const config = {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(newQuestion),
+    };
 
-  
-
-  const handleDeleteQuestion = async (id) => {
-    try {
-      const response = await fetch(`http://localhost:4000/questions/${id}`, {
-        method: "DELETE",
+    fetch("http://localhost:4000/questions", config)
+      .then((response) => response.json())
+      .then((newQuestion) => {
+        const newQuestions = [...questions, newQuestion];
+        setQuestions(newQuestions);
       });
-      if (response.ok) {
-        // Remove deleted question from the list
-        setQuestions(questions.filter((question) => question.id !== id));
-        console.log("Question deleted successfully");
-      } else {
-        console.error("Failed to delete question");
-      }
-    } catch (error) {
-      console.error("Error deleting question:", error);
-    }
   };
 
- 
+  const deleteQuestion = (id) => {
+    const config = {
+      method: "DELETE",
+    };
+    fetch(`http://localhost:4000/questions/${id}`, config)
+      .then((response) => response.json())
+      .then(() => {
+        const newQuestion = questions.filter((filter) => filter.id !== id);
+        setQuestions(newQuestion);
+      });
+  };
+
+  const updateQuestion = (id, updQuestion) => {
+    fetch(`http://localhost:4000/questions/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({ correctIndex: updQuestion }),
+    })
+      .then((response) => response.json())
+      .then((updQuestion) => {
+        const updQuestions = questions.map((dat) => {
+          if (dat.id === id) return updQuestion;
+          return questions;
+        });
+
+        setQuestions(updQuestions);
+      });
+  };
+
   return (
     <main>
       <AdminNavBar onChangePage={setPage} />
       {page === "Form" ? (
-        <QuestionForm />
+        <QuestionForm addQuestion={addQuestion} />
       ) : (
         <QuestionList
           questions={questions}
-          onDeleteQuestion={handleDeleteQuestion}
-         
+          delQuestion={deleteQuestion}
+          updatedQuestion={updateQuestion}
         />
       )}
     </main>
   );
-}
+};
 
 export default App;

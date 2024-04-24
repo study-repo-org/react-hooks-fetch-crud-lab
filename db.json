@@ -9,7 +9,7 @@
         "key",
         "prop"
       ],
-      "correctIndex": 2
+      "correctIndex": "1"
     },
     {
       "id": 2,
@@ -53,7 +53,7 @@
         "coalescing",
         "destructuring"
       ],
-      "correctIndex": 3
+      "correctIndex": "3"
     },
     {
       "id": 6,
@@ -64,25 +64,7 @@
         "reactive",
         "controlled"
       ],
-      "correctIndex": 1
-    },
-    {
-      "prompt": "rt",
-      "answer1": "rt",
-      "answer2": "tr",
-      "answer3": "tr",
-      "answer4": "tr",
-      "correctIndex": 0,
-      "id": 7
-    },
-    {
-      "prompt": "",
-      "answer1": "",
-      "answer2": "",
-      "answer3": "",
-      "answer4": "",
-      "correctIndex": 0,
-      "id": 8
+      "correctIndex": "1"
     }
   ]
 }
